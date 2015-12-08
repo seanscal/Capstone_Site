@@ -36,4 +36,3 @@ bower_components
 # Compiled files
 public/css/*
 public/js/*
-app/actions/CharacterActions.js
