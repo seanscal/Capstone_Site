@@ -31,33 +31,35 @@ class Home extends React.Component {
   }
 
   render() {
-    var characterNodes = this.state.characters.map((character, index) => {
-      return (
-        <div key={character.characterId} className={index === 0 ? 'col-xs-6 col-sm-6 col-md-5 col-md-offset-1' : 'col-xs-6 col-sm-6 col-md-5'}>
-          <div className='thumbnail fadeInUp animated'>
-            <img onClick={this.handleClick.bind(this, character)} src={'http://image.eveonline.com/Character/' + character.characterId + '_512.jpg'}/>
-            <div className='caption text-center'>
-              <ul className='list-inline'>
-                <li><strong>Race:</strong> {character.race}</li>
-                <li><strong>Bloodline:</strong> {character.bloodline}</li>
-              </ul>
-              <h4>
-                <Link to={'/characters/' + character.characterId}><strong>{character.name}</strong></Link>
-              </h4>
+    return (
+      <div className='container'>
+        <div className='row flipInX animated'>
+          <div className='col-sm-8'>
+            <div className='panel panel-default'>
+              <div className='panel-heading'>Add User</div>
+              <div className='panel-body'>
+                <form onSubmit={this.handleSubmit.bind(this)}>
+                  <div className={'form-group ' + this.state.nameValidationState}>
+                    <label className='control-label'>User Name</label>
+                    <input type='text' className='form-control' ref='nameTextField' value={this.state.name}
+                           onChange={AddUserActions.updateName} autoFocus/>
+                    <span className='help-block'>{this.state.helpBlock}</span>
+                  </div>
+                  <div className={'form-group ' + this.state.emailValidationState}>
+                    <label className='control-label'>Email</label>
+                    <input type='text' className='form-control' ref='emailTextField' value={this.state.email}
+                           onChange={AddUserActions.updateEmail} autoFocus/>
+                    <span className='help-block'>{this.state.helpBlock}</span>
+                  </div>
+                  <button type='submit' className='btn btn-primary'>Submit</button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
+      </div>
       );
     });
-
-    return (
-      <div className='container'>
-        <h3 className='text-center'>Click on the portrait. Select your favorite.</h3>
-        <div className='row'>
-          {characterNodes}
-        </div>
-      </div>
-    );
   }
 }
 

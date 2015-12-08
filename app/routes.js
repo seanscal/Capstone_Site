@@ -14,7 +14,7 @@ export default (
     <Route path='/stats' component={Stats} />
     <Route path='/characters/:id' component={Character} />
     <Route path='/add' component={AddCharacter} />
-    <Route path='/adduser' component={AddUser} />
+    <Route path='/signup' component={AddUser} />
     
     <Route path=':category' component={CharacterList}>
       <Route path=':race' component={CharacterList}>

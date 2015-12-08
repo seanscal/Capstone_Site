@@ -42,7 +42,6 @@ class AddUser extends React.Component {
   }
 
   render() {
-    console.log("EHRE")
     return (
       <div className='container'>
         <div className='row flipInX animated'>
