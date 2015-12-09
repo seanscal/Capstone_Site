@@ -36,30 +36,17 @@ class Home extends React.Component {
         <div className='row flipInX animated'>
           <div className='col-sm-8'>
             <div className='panel panel-default'>
-              <div className='panel-heading'>Add User</div>
+              <div className='panel-heading'>Welcome!</div>
               <div className='panel-body'>
-                <form onSubmit={this.handleSubmit.bind(this)}>
-                  <div className={'form-group ' + this.state.nameValidationState}>
-                    <label className='control-label'>User Name</label>
-                    <input type='text' className='form-control' ref='nameTextField' value={this.state.name}
-                           onChange={AddUserActions.updateName} autoFocus/>
-                    <span className='help-block'>{this.state.helpBlock}</span>
-                  </div>
-                  <div className={'form-group ' + this.state.emailValidationState}>
-                    <label className='control-label'>Email</label>
-                    <input type='text' className='form-control' ref='emailTextField' value={this.state.email}
-                           onChange={AddUserActions.updateEmail} autoFocus/>
-                    <span className='help-block'>{this.state.helpBlock}</span>
-                  </div>
-                  <button type='submit' className='btn btn-primary'>Submit</button>
+                <form>
+                  <button type='submit' className='btn btn-primary'>Hello!</button>
                 </form>
               </div>
             </div>
           </div>
         </div>
       </div>
-      );
-    });
+    );
   }
 }
 
