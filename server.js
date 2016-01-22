@@ -166,10 +166,10 @@ app.get('/api/characters/shame', function(req, res, next) {
 });
 
 /**
- * GET /api/characters/top
- * Return 100 highest ranked characters. Filter by gender, race and bloodline.
+ * GET /api/users
+ * Return all users
  */
-app.get('/api/characters/top', function(req, res, next) {
+app.get('/api/users', function(req, res, next) {
   var params = req.query;
   var conditions = {};
 
@@ -177,20 +177,10 @@ app.get('/api/characters/top', function(req, res, next) {
     conditions[key] = new RegExp('^' + value + '$', 'i');
   });
 
-  Character
-    .find(conditions)
-    .sort('-wins')
-    .limit(100)
-    .exec(function(err, characters) {
-      if (err) return next(err);
-
-      characters.sort(function(a, b) {
-        if (a.wins / (a.wins + a.losses) < b.wins / (b.wins + b.losses)) { return 1; }
-        if (a.wins / (a.wins + a.losses) > b.wins / (b.wins + b.losses)) { return -1; }
-        return 0;
-      });
-
-      res.send(characters);
+  User
+    .find()
+    .exec(function(err, users) {
+      res.send(users);
     });
 });
 
@@ -273,6 +263,27 @@ app.post('/api/characters', function(req, res, next) {
  * Adds new user to the database.
  */
 app.post('/api/users', function(req, res, next) {
+  var email = req.body.email;
+  var name = req.body.name;
+  var userId = [Math.random(), 0]
+
+  var user = new User({
+    userId: userId,
+    name: name,
+    email: email,
+  });
+
+  user.save(function(err) {
+    if (err) return next(err);
+    res.send({ message: name + ' has been added successfully!' });
+  });
+});
+
+/**
+ * POST /api/users
+ * Adds new user to the database.
+ */
+app.get('/api/users', function(req, res, next) {
   var email = req.body.email;
   var name = req.body.name;
   var userId = [Math.random(), 0]
