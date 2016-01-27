@@ -185,6 +185,15 @@ app.get('/api/users', function(req, res, next) {
 });
 
 /**
+ * GET /api/hubs
+ * Return all locker hubs
+ */
+app.get('/api/hubs', function(req, res, next) {
+  res.send([{ name: "NEU Hub", openUnits: 2, lat: 42.3399, long: -71.0892},
+            { name: "NYC Hub", openUnits: 4, lat: 40.7127, long: -74.0059}]);
+});
+
+/**
  * GET /api/characters/count
  * Returns the total number of characters.
  */
