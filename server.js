@@ -195,10 +195,21 @@ app.get('/api/hubs', function(req, res, next) {
 
 /**
  * GET /api/hubs/:id
- * Return data for hub
+ * Return data for specified hub
  */
 app.get('/api/hubs/:id', function(req, res, next) {
-  res.send({ uid: req.params.id});
+  // temporarily hardcoding a response
+
+  var totalUnits = 6;
+  var openUnits = Math.floor((Math.random() * totalUnits) + 1);
+  res.send({ addressLine1: "15 Forsyth St", addressLine2: "Boston, MA 02115", totalUnits: totalUnits, openUnits: openUnits, hourlyRate: 2.75});
+
+  /** TODO:
+   * Ultimately this method will return metadata for the specified locker hub (human-readable location, total
+   * # of units, # available units, and hourly rate.
+   */
+
+
 });
 
 /**
