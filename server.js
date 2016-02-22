@@ -212,6 +212,28 @@ app.get('/api/hubs/:id', function(req, res, next) {
 
 });
 
+app.get('/api/pi', function(req, res, next) {
+  var options = {
+    host: url,
+    port: 5000,
+    path: '/test',
+    method: 'GET'
+  };
+
+  http.request(options, function(res) {
+    console.log('STATUS: ' + res.statusCode);
+    console.log('HEADERS: ' + JSON.stringify(res.headers));
+    res.setEncoding('utf8');
+    res.on('data', function (chunk) {
+      console.log('BODY: ' + chunk);
+    });
+  }).end();
+});
+
+app.post('/api/reserve', function(req, res, next) {
+  res.send({ responseString: "Reservation successful." });
+});
+
 /**
  * GET /api/characters/count
  * Returns the total number of characters.
