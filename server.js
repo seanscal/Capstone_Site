@@ -151,21 +151,6 @@ app.put('/api/characters', function(req, res, next) {
 });
 
 /**
- * GET /api/characters/shame
- * Returns 100 lowest ranked characters.
- */
-app.get('/api/characters/shame', function(req, res, next) {
-  Character
-    .find()
-    .sort('-losses')
-    .limit(100)
-    .exec(function(err, characters) {
-      if (err) return next(err);
-      res.send(characters);
-    });
-});
-
-/**
  * GET /api/users
  * Return all users
  */
@@ -265,12 +250,18 @@ app.post('/api/characters', function(req, res, next) {
 app.post('/api/users', function(req, res, next) {
   var email = req.body.email;
   var name = req.body.name;
-  var userId = [Math.random(), 0]
+  var birthday = req.body.birthday;
+  var gender = req.body.gender;
+  var picture = req.body.picture;
+  var userId = req.body.id;
 
   var user = new User({
     userId: userId,
     name: name,
     email: email,
+    birthday: birthday,
+    gender: gender,
+    picture: picture
   });
 
   user.save(function(err) {
@@ -280,24 +271,10 @@ app.post('/api/users', function(req, res, next) {
 });
 
 /**
- * POST /api/users
- * Adds new user to the database.
+ * GET /api/users
+ * Gets users from the database.
  */
 app.get('/api/users', function(req, res, next) {
-  var email = req.body.email;
-  var name = req.body.name;
-  var userId = [Math.random(), 0]
-
-  var user = new User({
-    userId: userId,
-    name: name,
-    email: email,
-  });
-
-  user.save(function(err) {
-    if (err) return next(err);
-    res.send({ message: name + ' has been added successfully!' });
-  });
 });
 
 /**
