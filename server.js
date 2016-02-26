@@ -20,7 +20,6 @@ var _ = require('underscore');
 
 var config = require('./config');
 var routes = require('./app/routes');
-var Character = require('./models/character');
 var User = require('./models/user');
 
 var app = express();
@@ -44,113 +43,6 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 /**
- * GET /api/characters
- * Returns 2 random characters of the same gender that have not been voted yet.
- */
-app.get('/api/characters', function(req, res, next) {
-  var choices = ['Female', 'Male'];
-  var randomGender = _.sample(choices);
-
-  Character.find({ random: { $near: [Math.random(), 0] } })
-    .where('voted', false)
-    .where('gender', randomGender)
-    .limit(2)
-    .exec(function(err, characters) {
-      if (err) return next(err);
-
-      if (characters.length === 2) {
-        return res.send(characters);
-      }
-
-      var oppositeGender = _.first(_.without(choices, randomGender));
-
-      Character
-        .find({ random: { $near: [Math.random(), 0] } })
-        .where('voted', false)
-        .where('gender', oppositeGender)
-        .limit(2)
-        .exec(function(err, characters) {
-          if (err) return next(err);
-
-          if (characters.length === 2) {
-            return res.send(characters);
-          }
-
-          Character.update({}, { $set: { voted: false } }, { multi: true }, function(err) {
-            if (err) return next(err);
-            res.send([]);
-          });
-        });
-    });
-});
-
-/**
- * PUT /api/characters
- * Update winning and losing count for both characters.
- */
-app.put('/api/characters', function(req, res, next) {
-  var winner = req.body.winner;
-  var loser = req.body.loser;
-
-  if (!winner || !loser) {
-    return res.status(400).send({ message: 'Voting requires two characters.' });
-  }
-
-  if (winner === loser) {
-    return res.status(400).send({ message: 'Cannot vote for and against the same character.' });
-  }
-
-  async.parallel([
-      function(callback) {
-        Character.findOne({ characterId: winner }, function(err, winner) {
-          callback(err, winner);
-        });
-      },
-      function(callback) {
-        Character.findOne({ characterId: loser }, function(err, loser) {
-          callback(err, loser);
-        });
-      }
-    ],
-    function(err, results) {
-      if (err) return next(err);
-
-      var winner = results[0];
-      var loser = results[1];
-
-      if (!winner || !loser) {
-        return res.status(404).send({ message: 'One of the characters no longer exists.' });
-      }
-
-      if (winner.voted || loser.voted) {
-        return res.status(200).end();
-      }
-
-      async.parallel([
-        function(callback) {
-          winner.wins++;
-          winner.voted = true;
-          winner.random = [Math.random(), 0];
-          winner.save(function(err) {
-            callback(err);
-          });
-        },
-        function(callback) {
-          loser.losses++;
-          loser.voted = true;
-          loser.random = [Math.random(), 0];
-          loser.save(function(err) {
-            callback(err);
-          });
-        }
-      ], function(err) {
-        if (err) return next(err);
-        res.status(200).end();
-      });
-    });
-});
-
-/**
  * POST /api/users
  * Adds new user to the database.
  */
@@ -162,18 +54,28 @@ app.post('/api/users', function(req, res, next) {
   var picture = req.body.picture;
   var userId = req.body.id;
 
-  var user = new User({
-    userId: userId,
-    name: name,
-    email: email,
-    birthday: birthday,
-    gender: gender,
-    picture: picture
-  });
-
-  user.save(function(err) {
+  User.findOne({ email: email }, function(err, user) {
     if (err) return next(err);
-    res.send({ message: name + ' has been added successfully!' });
+
+    if (!user) {
+      var user = new User({
+        userId: userId,
+        name: name,
+        email: email,
+        birthday: birthday,
+        gender: gender,
+        picture: picture
+      });
+      user.save(function(err) {
+        if (err) return next(err);
+        res.send({ message: name + ' has been added successfully!' });
+      });
+    }
+    else{
+      user
+    }
+
+    res.send(user);
   });
 });
 
@@ -203,7 +105,7 @@ app.get('/api/users', function(req, res, next) {
 app.get('/api/users/:id', function(req, res, next) {
   var id = req.params.id;
 
-  User.findOne({ userId: id }, function(err, user) {
+  User.findOne({ _id: id }, function(err, user) {
     if (err) return next(err);
 
     if (!user) {
@@ -238,8 +140,6 @@ app.get('/api/hubs/:id', function(req, res, next) {
    * Ultimately this method will return metadata for the specified locker hub (human-readable location, total
    * # of units, # available units, and hourly rate.
    */
-
-
 });
 
 app.get('/api/pi', function(req, res, next) {
@@ -264,52 +164,25 @@ app.post('/api/reserve', function(req, res, next) {
   res.send({ responseString: "Reservation successful." });
 });
 
-/**
- * GET /api/characters/count
- * Returns the total number of characters.
- */
-app.get('/api/characters/count', function(req, res, next) {
-  Character.count({}, function(err, count) {
-    if (err) return next(err);
-    res.send({ count: count });
-  });
-});
 
-/**
- * GET /api/characters/search
- * Looks up a character by name. (case-insensitive)
- */
-app.get('/api/characters/search', function(req, res, next) {
-  var characterName = new RegExp(req.query.name, 'i');
+// This Might be useful
+// /**
+//  * GET /api/characters/search
+//  * Looks up a character by name. (case-insensitive)
+//  */
+// app.get('/api/characters/search', function(req, res, next) {
+//   var characterName = new RegExp(req.query.name, 'i');
 
-  Character.findOne({ name: characterName }, function(err, character) {
-    if (err) return next(err);
+//   Character.findOne({ name: characterName }, function(err, character) {
+//     if (err) return next(err);
 
-    if (!character) {
-      return res.status(404).send({ message: 'Character not found.' });
-    }
+//     if (!character) {
+//       return res.status(404).send({ message: 'Character not found.' });
+//     }
 
-    res.send(character);
-  });
-});
-
-/**
- * GET /api/characters/:id
- * Returns detailed character information.
- */
-app.get('/api/characters/:id', function(req, res, next) {
-  var id = req.params.id;
-
-  Character.findOne({ characterId: id }, function(err, character) {
-    if (err) return next(err);
-
-    if (!character) {
-      return res.status(404).send({ message: 'Character not found.' });
-    }
-
-    res.send(character);
-  });
-});
+//     res.send(character);
+//   });
+// });
 
 
 app.use(function(req, res) {
