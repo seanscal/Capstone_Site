@@ -17,6 +17,9 @@ var Router = require('react-router');
 var swig  = require('swig');
 var xml2js = require('xml2js');
 var _ = require('underscore');
+var querystring = require('querystring');
+var http = require('http');
+var fs = require('fs');
 
 var config = require('./config');
 var routes = require('./app/routes');
@@ -161,9 +164,6 @@ app.get('/api/pi', function(req, res, next) {
 });
 
 app.post('/api/reserve', function(req, res, next) {
-
-  var http = require('http');
-  var querystring = require('querystring');
 
   //pass in hubid, rasberry pi maps hubid to ip addresss of pi and finds next available locker
   // var reservationRequest = {
