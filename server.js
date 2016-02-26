@@ -151,6 +151,33 @@ app.put('/api/characters', function(req, res, next) {
 });
 
 /**
+ * POST /api/users
+ * Adds new user to the database.
+ */
+app.post('/api/users', function(req, res, next) {
+  var email = req.body.email;
+  var name = req.body.name;
+  var birthday = req.body.birthday;
+  var gender = req.body.gender;
+  var picture = req.body.picture;
+  var userId = req.body.id;
+
+  var user = new User({
+    userId: userId,
+    name: name,
+    email: email,
+    birthday: birthday,
+    gender: gender,
+    picture: picture
+  });
+
+  user.save(function(err) {
+    if (err) return next(err);
+    res.send({ message: name + ' has been added successfully!' });
+  });
+});
+
+/**
  * GET /api/users
  * Return all users
  */
@@ -167,6 +194,24 @@ app.get('/api/users', function(req, res, next) {
     .exec(function(err, users) {
       res.send(users);
     });
+});
+
+/**
+ * GET /api/users/:id
+ * Return all users
+ */
+app.get('/api/users/:id', function(req, res, next) {
+  var id = req.params.id;
+
+  User.findOne({ userId: id }, function(err, user) {
+    if (err) return next(err);
+
+    if (!user) {
+      return res.status(404).send({ message: 'User not found.' });
+    }
+
+    res.send(user);
+  });
 });
 
 /**
@@ -266,198 +311,6 @@ app.get('/api/characters/:id', function(req, res, next) {
   });
 });
 
-/**
- * POST /api/characters
- * Adds new character to the database.
- */
-app.post('/api/characters', function(req, res, next) {
-  var gender = req.body.gender;
-  var characterName = req.body.name;
-  var name = req.body.name;
-  var race = "Amarr"
-  var bloodline = "Gallente"
-  var characterId = [Math.random(), 0]
-
-  var character = new Character({
-    characterId: characterId,
-    name: name,
-    race: race,
-    bloodline: bloodline,
-    gender: gender,
-    random: [Math.random(), 0]
-  });
-
-  character.save(function(err) {
-    if (err) return next(err);
-    res.send({ message: characterName + ' has been added successfully!' });
-  });
-});
-
-/**
- * POST /api/users
- * Adds new user to the database.
- */
-app.post('/api/users', function(req, res, next) {
-  var email = req.body.email;
-  var name = req.body.name;
-  var birthday = req.body.birthday;
-  var gender = req.body.gender;
-  var picture = req.body.picture;
-  var userId = req.body.id;
-
-  var user = new User({
-    userId: userId,
-    name: name,
-    email: email,
-    birthday: birthday,
-    gender: gender,
-    picture: picture
-  });
-
-  user.save(function(err) {
-    if (err) return next(err);
-    res.send({ message: name + ' has been added successfully!' });
-  });
-});
-
-/**
- * GET /api/users
- * Gets users from the database.
- */
-app.get('/api/users', function(req, res, next) {
-});
-
-/**
- * GET /api/stats
- * Returns characters statistics.
- */
-app.get('/api/stats', function(req, res, next) {
-  async.parallel([
-      function(callback) {
-        Character.count({}, function(err, count) {
-          callback(err, count);
-        });
-      },
-      function(callback) {
-        Character.count({ race: 'Amarr' }, function(err, amarrCount) {
-          callback(err, amarrCount);
-        });
-      },
-      function(callback) {
-        Character.count({ race: 'Caldari' }, function(err, caldariCount) {
-          callback(err, caldariCount);
-        });
-      },
-      function(callback) {
-        Character.count({ race: 'Gallente' }, function(err, gallenteCount) {
-          callback(err, gallenteCount);
-        });
-      },
-      function(callback) {
-        Character.count({ race: 'Minmatar' }, function(err, minmatarCount) {
-          callback(err, minmatarCount);
-        });
-      },
-      function(callback) {
-        Character.count({ gender: 'Male' }, function(err, maleCount) {
-          callback(err, maleCount);
-        });
-      },
-      function(callback) {
-        Character.count({ gender: 'Female' }, function(err, femaleCount) {
-          callback(err, femaleCount);
-        });
-      },
-      function(callback) {
-        Character.aggregate({ $group: { _id: null, total: { $sum: '$wins' } } }, function(err, totalVotes) {
-            var total = totalVotes.length ? totalVotes[0].total : 0;
-            callback(err, total);
-          }
-        );
-      },
-      function(callback) {
-        Character
-          .find()
-          .sort('-wins')
-          .limit(100)
-          .select('race')
-          .exec(function(err, characters) {
-            if (err) return next(err);
-
-            var raceCount = _.countBy(characters, function(character) { return character.race; });
-            var max = _.max(raceCount, function(race) { return race });
-            var inverted = _.invert(raceCount);
-            var topRace = inverted[max];
-            var topCount = raceCount[topRace];
-
-            callback(err, { race: topRace, count: topCount });
-          });
-      },
-      function(callback) {
-        Character
-          .find()
-          .sort('-wins')
-          .limit(100)
-          .select('bloodline')
-          .exec(function(err, characters) {
-            if (err) return next(err);
-
-            var bloodlineCount = _.countBy(characters, function(character) { return character.bloodline; });
-            var max = _.max(bloodlineCount, function(bloodline) { return bloodline });
-            var inverted = _.invert(bloodlineCount);
-            var topBloodline = inverted[max];
-            var topCount = bloodlineCount[topBloodline];
-
-            callback(err, { bloodline: topBloodline, count: topCount });
-          });
-      }
-    ],
-    function(err, results) {
-      if (err) return next(err);
-
-      res.send({
-        totalCount: results[0],
-        amarrCount: results[1],
-        caldariCount: results[2],
-        gallenteCount: results[3],
-        minmatarCount: results[4],
-        maleCount: results[5],
-        femaleCount: results[6],
-        totalVotes: results[7],
-        leadingRace: results[8],
-        leadingBloodline: results[9]
-      });
-    });
-});
-
-
-/**
- * POST /api/report
- * Reports a character. Character is removed after 4 reports.
- */
-app.post('/api/report', function(req, res, next) {
-  var characterId = req.body.characterId;
-
-  Character.findOne({ characterId: characterId }, function(err, character) {
-    if (err) return next(err);
-
-    if (!character) {
-      return res.status(404).send({ message: 'Character not found.' });
-    }
-
-    character.reports++;
-
-    if (character.reports > 4) {
-      character.remove();
-      return res.send({ message: character.name + ' has been deleted.' });
-    }
-
-    character.save(function(err) {
-      if (err) return next(err);
-      res.send({ message: character.name + ' has been reported.' });
-    });
-  });
-});
 
 app.use(function(req, res) {
   Router.match({ routes: routes.default, location: req.url }, function(err, redirectLocation, renderProps) {
