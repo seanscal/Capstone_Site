@@ -171,33 +171,34 @@ app.post('/api/reserve', function(req, res, next) {
   //   customer_id: req.body.userId 
   // };
 
-  var reservationRequest = querystring.stringify({
-    'locker_id': "123", 
-    'customer_id': "123" 
-  });
+  // var reservationRequest = querystring.stringify({
+  //   'locker_id': "123", 
+  //   'customer_id': "123" 
+  // });
 
-  var options = {
-    host: '71.234.41.9',
-    port: 5000,
-    path: '/allocate_locker',
-    method: 'POST',
-    headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(reservationRequest)
-      }
-  };
+  // var options = {
+  //   host: '71.234.41.9',
+  //   port: 5000,
+  //   path: '/allocate_locker',
+  //   method: 'POST',
+  //   headers: {
+  //         'Content-Type': 'application/json',
+  //         'Content-Length': Buffer.byteLength(reservationRequest)
+  //     }
+  // };
 
    // Set up the request
-  var post_req = http.request(options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-          console.log('Response: ' + chunk);
-      });
-  });
-
-  // post the data
-  post_req.write(reservationRequest);
-  post_req.end();
+  
+  request.post(
+    '71.234.41.9:5000/allocate_locker',
+    { json: { locker_id:"123", customer_id:"123"}},
+    function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body)
+        }
+    }
+  );
+})
 
 });
 
