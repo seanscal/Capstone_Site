@@ -161,6 +161,9 @@ app.get('/api/pi', function(req, res, next) {
 });
 
 app.post('/api/reserve', function(req, res, next) {
+
+  var http = require('http');
+
   //pass in hubid, rasberry pi maps hubid to ip addresss of pi and finds next available locker
   // var reservationRequest = {
   //   locker_id: req.body.hubId, 
@@ -184,7 +187,7 @@ app.post('/api/reserve', function(req, res, next) {
   };
 
    // Set up the request
-  var post_req = server.request(options, function(res) {
+  var post_req = http.request(options, function(res) {
       res.setEncoding('utf8');
       res.on('data', function (chunk) {
           console.log('Response: ' + chunk);
