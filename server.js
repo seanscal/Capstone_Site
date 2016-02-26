@@ -171,7 +171,7 @@ app.post('/api/reserve', function(req, res, next) {
   });
 
   var options = {
-    host: 'nulockerhub.com',
+    host: 'http://www.nulockerhub.com',
     path: '/users',
     method: 'POST',
     headers: {
