@@ -12,7 +12,6 @@ class Navbar extends React.Component {
 
   componentDidMount() {
     NavbarStore.listen(this.onChange);
-    NavbarActions.getCharacterCount();
 
     let socket = io.connect();
 
@@ -45,11 +44,6 @@ class Navbar extends React.Component {
     let searchQuery = this.state.searchQuery.trim();
 
     if (searchQuery) {
-      NavbarActions.findCharacter({
-        searchQuery: searchQuery,
-        searchForm: this.refs.searchForm,
-        history: this.props.history
-      });
     }
   }
 
