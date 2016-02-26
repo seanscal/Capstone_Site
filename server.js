@@ -161,7 +161,36 @@ app.get('/api/pi', function(req, res, next) {
 });
 
 app.post('/api/reserve', function(req, res, next) {
-  res.send({ responseString: "Reservation successful." });
+  //pass in hubid, rasberry pi maps hubid to ip addresss of pi and finds next available locker
+  // var reservationRequest = { locker_id: req.body.hubId, customer_id: req.body.userId }
+  var reservationRequest = {
+    locker_id: req.body.hubId, 
+    customer_id: req.body.userId 
+  };
+
+  var options = {
+    host: '10.0.0.49',
+    port: 5000,
+    path: '/allocate_locker',
+    method: 'POST',
+    headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(reservationRequest)
+      }
+  };
+
+   // Set up the request
+  var post_req = http.request(options, function(res) {
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          console.log('Response: ' + chunk);
+      });
+  });
+
+  // post the data
+  post_req.write(reservationRequest);
+  post_req.end();
+
 });
 
 
