@@ -170,10 +170,10 @@ app.post('/api/reserve', function(req, res, next) {
   //   customer_id: req.body.userId 
   // };
 
-  var reservationRequest = {
-    locker_id: 123, 
-    customer_id: 123 
-  };
+  var reservationRequest = querystring.stringify({
+    'locker_id': 123, 
+    'customer_id': 123 
+  });
 
   var options = {
     host: '10.0.0.49',
