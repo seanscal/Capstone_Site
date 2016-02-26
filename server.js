@@ -177,7 +177,7 @@ app.post('/api/reserve', function(req, res, next) {
   });
 
   var options = {
-    host: '10.0.0.49',
+    host: '71.234.41.9',
     port: 5000,
     path: '/allocate_locker',
     method: 'POST',
