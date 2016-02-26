@@ -163,6 +163,7 @@ app.get('/api/pi', function(req, res, next) {
 app.post('/api/reserve', function(req, res, next) {
 
   var http = require('http');
+  var querystring = require('querystring');
 
   //pass in hubid, rasberry pi maps hubid to ip addresss of pi and finds next available locker
   // var reservationRequest = {
