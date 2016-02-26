@@ -166,13 +166,14 @@ app.get('/api/pi', function(req, res, next) {
 app.post('/api/reserve', function(req, res, next) {
 
   var reservationRequest = querystring.stringify({
-    "email": "email", 
-    "name": "hi" 
+    "locker_id": "123", 
+    "customer_id": "123" 
   });
 
   var options = {
-    host: 'http://www.nulockerhub.com',
-    path: '/users',
+    host: '71.234.41.9',
+    port: 5000,
+    path: '/allocate_locker',
     method: 'POST',
     headers: {
           'Content-Type': 'application/json',
