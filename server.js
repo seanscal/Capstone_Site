@@ -147,7 +147,7 @@ app.get('/api/hubs/:id', function(req, res, next) {
 
 app.get('/api/pi', function(req, res, next) {
   var options = {
-    host: url,
+    host: "71.234.41.9",
     port: 5000,
     path: '/test',
     method: 'GET'
