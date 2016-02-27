@@ -166,8 +166,8 @@ app.get('/api/pi', function(req, res, next) {
 app.post('/api/reserve', function(req, res, next) {
 
   var reservationRequest = {
-    locker_id: "123", 
-    customer_id: "123" 
+    "locker_id": "123", 
+    "customer_id": "123" 
   };
 
   var options = {
