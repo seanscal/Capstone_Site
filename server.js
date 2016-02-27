@@ -163,11 +163,25 @@ app.get('/api/pi', function(req, res, next) {
   }).end();
 });
 
-app.post('/api/reserve', function(req, res, next) {
+app.post('/api/allocate_locker', function(req, res, next) {
 
   var baseurl = "http://71.234.41.9:5000/allocate_locker"
-
   var jsonData = {"locker_id":"5345","customer_id":"5345"};
+
+  rest.postJson(baseurl, jsonData).on('complete', function(data) {
+      if ( data.error ) {
+          sys.puts("Error: " + data.error_message);
+      }
+      console.log(data);
+  });
+});
+
+
+app.post('/api/deallocate_locker', function(req, res, next) {
+
+  var baseurl = "http://71.234.41.9:5000/deallocate_locker"
+  var jsonData = {"locker_id":"5345","customer_id":"5345"};
+  
   rest.postJson(baseurl, jsonData).on('complete', function(data) {
       if ( data.error ) {
           sys.puts("Error: " + data.error_message);
