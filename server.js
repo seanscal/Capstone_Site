@@ -170,31 +170,16 @@ app.post('/api/reserve', function(req, res, next) {
     "customer_id": "123" 
   };
 
-  var options = {
-    host: '71.234.41.9',
-    port: 5000,
-    path: '/allocate_locker',
-    method: 'POST',
-    headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(reservationRequest)
+  var baseurl = "71.234.41.9:5000/allocate_locker"
+
+
+  var jsonData = {"locker_id":"545","customer_id":"545"};
+  rest.postJson(baseurl, jsonData).on('complete', function(data) {
+      if ( data.error ) {
+          sys.puts("Error: " + data.error_message);
       }
-
-  };
-
-   // Set up the request
-  var post_req = http.request(options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-          console.log('Response: ' + chunk);
-      });
+      console.log(data);
   });
-
-  // post the data
-  post_req.write(reservationRequest);
-  post_req.end();
-
-});
 
 
 // This Might be useful
