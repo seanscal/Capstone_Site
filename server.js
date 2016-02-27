@@ -165,11 +165,34 @@ app.get('/api/pi', function(req, res, next) {
 
 app.post('/api/reserve', function(req, res, next) {
 
-  var jsonData = {  locker_id: "2334", 
-                    customer_id: "2334" };
-  rest.postJson('71.234.41.9:5000/allocate_locker', jsonData).on('complete', function(data, response) {
-
+  var reservationRequest = querystring.stringify({
+    locker_id: "123", 
+    customer_id: "123" 
   });
+
+  var options = {
+    host: '71.234.41.9',
+    port: 5000,
+    path: '/allocate_locker',
+    method: 'POST',
+    headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(reservationRequest)
+      }
+
+  };
+
+   // Set up the request
+  var post_req = http.request(options, function(res) {
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          console.log('Response: ' + chunk);
+      });
+  });
+
+  // post the data
+  post_req.write(reservationRequest);
+  post_req.end();
 
 });
 
