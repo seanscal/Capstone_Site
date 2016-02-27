@@ -172,7 +172,6 @@ app.post('/api/reserve', function(req, res, next) {
 
   var baseurl = "71.234.41.9:5000/allocate_locker"
 
-
   var jsonData = {"locker_id":"545","customer_id":"545"};
   rest.postJson(baseurl, jsonData).on('complete', function(data) {
       if ( data.error ) {
@@ -180,6 +179,7 @@ app.post('/api/reserve', function(req, res, next) {
       }
       console.log(data);
   });
+});
 
 
 // This Might be useful
