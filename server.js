@@ -170,7 +170,7 @@ app.post('/api/reserve', function(req, res, next) {
     "customer_id": "123" 
   };
 
-  var baseurl = "71.234.41.9:5000/allocate_locker"
+  var baseurl = "http://71.234.41.9:5000/allocate_locker"
 
   var jsonData = {"locker_id":"545","customer_id":"545"};
   rest.postJson(baseurl, jsonData).on('complete', function(data) {
