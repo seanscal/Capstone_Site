@@ -165,11 +165,6 @@ app.get('/api/pi', function(req, res, next) {
 
 app.post('/api/reserve', function(req, res, next) {
 
-  var reservationRequest = {
-    "locker_id": "123", 
-    "customer_id": "123" 
-  };
-
   var baseurl = "http://71.234.41.9:5000/allocate_locker"
 
   var jsonData = {"locker_id":"545","customer_id":"545"};
