@@ -124,7 +124,7 @@ app.get('/api/users/:id', function(req, res, next) {
  * Return all locker hubs
  */
 app.get('/api/hubs', function(req, res, next) {
-  res.send([{ uid: 1, name: "NEU Hub", openUnits: 2, lat: 42.3399, long: -71.0892, hourlyRate: 1.25, baseRate: 2},
+  res.send([{ uid: 1, name: "NEU Hub", openUnits: 2, lat: 42.3399, long: -71.0892, hourlyRate: 5.25, baseRate: 2},
             { uid: 2, name: "NYC Hub", openUnits: 4, lat: 40.7127, long: -74.0059, hourlyRate: 1.25, baseRate: 2}]);
 });
 
@@ -137,12 +137,67 @@ app.get('/api/hubs/:id', function(req, res, next) {
 
   var totalUnits = 6;
   var openUnits = Math.floor((Math.random() * totalUnits) + 1);
-  res.send({ addressLine1: "15 Forsyth St", addressLine2: "Boston, MA 02115", totalUnits: totalUnits, openUnits: openUnits, hourlyRate: 1.25, baseRate: 2.00});
+  res.send({ totalUnits: totalUnits, openUnits: openUnits });
 
   /** TODO:
    * Ultimately this method will return metadata for the specified locker hub (human-readable location, total
    * # of units, # available units, and hourly rate.
    */
+});
+
+app.get('/api/rentals/:active/:userId', function(req, res, next) {
+  var pastRentals = [{
+    uid: 1,
+    userId: 1,
+    hubId: 1,
+    hubName: "NEU Hub",
+    lockerId: 3,
+    checkInTime: 1457592837,
+    checkOutTime: 1457603829,
+    isActive: false,
+    baseRate: 2.00,
+    hourlyRate: 1.25
+  }, {
+    uid: 2,
+    userId: 1,
+    hubId: 1,
+    hubName: "NYC Hub",
+    lockerId: 2,
+    checkInTime: 1457604893,
+    checkOutTime: 1457609983,
+    isActive: false,
+    baseRate: 2.00,
+    hourlyRate: 1.25
+  }, {
+    uid: 3,
+    userId: 1,
+    hubId: 1,
+    hubName: "NEU Hub",
+    lockerId: 5,
+    checkInTime: 1457611032,
+    checkOutTime: 1457614325,
+    isActive: false,
+    baseRate: 2.00,
+    hourlyRate: 1.25
+  }];
+
+  var activeRentals = [{
+      uid: 4,
+      userId: 1,
+      hubId: 1,
+      hubName: "Prudential Hub",
+      lockerId: 1,
+      checkInTime: Math.trunc((((new Date()).getTime() / 1000) - 4215)),
+      checkOutTime: null,
+      isActive: true,
+      baseRate: 2.00,
+      hourlyRate: 5.25
+  }];
+
+  var active = req.params.active;
+  console.log(active);
+  res.send(active == true ? activeRentals : pastRentals);
+
 });
 
 app.get('/api/pi', function(req, res, next) {
