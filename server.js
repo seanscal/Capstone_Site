@@ -62,9 +62,8 @@ app.post('/api/users', function(req, res, next) {
   User.findOne({ email: email }, function(err, user) {
     if (err) return next(err);
 
-    
     if (!user) {
-      console.log("FOUND USER\n" + user);
+      console.log("NEW USER\n" + user);
       var user = new User({
         userId: userId,
         name: name,
@@ -80,7 +79,9 @@ app.post('/api/users', function(req, res, next) {
       res.send(user);
     }
     else{
-    console.log("NEW USER\n" + user);
+    console.log("FOUND USER\n" + user);
+    user.pin = pin;
+    console.log("THIS SHOULD ADD A PIN\n" + user);
     res.send(user);
     }
   });
