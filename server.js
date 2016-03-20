@@ -75,9 +75,12 @@ app.post('/api/users', function(req, res, next) {
         if (err) return next(err);
         res.send({ message: name + ' has been added successfully!' });
       });
+      res.send("Added this user: " + user);
     }
 
-    res.send(user);
+    else{
+    res.send("Found a user: " + user);
+    }
   });
 });
 
