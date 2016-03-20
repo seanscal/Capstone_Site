@@ -56,6 +56,7 @@ app.post('/api/users', function(req, res, next) {
   var gender = req.body.gender;
   var picture = req.body.picture;
   var userId = req.body.id;
+  var pin = req.body.id;
 
   User.findOne({ email: email }, function(err, user) {
     if (err) return next(err);
@@ -67,15 +68,13 @@ app.post('/api/users', function(req, res, next) {
         email: email,
         birthday: birthday,
         gender: gender,
-        picture: picture
+        picture: picture,
+        pin: pin
       });
       user.save(function(err) {
         if (err) return next(err);
         res.send({ message: name + ' has been added successfully!' });
       });
-    }
-    else{
-      user
     }
 
     res.send(user);
@@ -103,12 +102,13 @@ app.get('/api/users', function(req, res, next) {
 
 /**
  * GET /api/users/:id
- * Return all users
+ * Return user of id :id
  */
 app.get('/api/users/:id', function(req, res, next) {
   var id = req.params.id;
+  var email = req.params.email;
 
-  User.findOne({ _id: id }, function(err, user) {
+  User.findOne({ email: email }, function(err, user) {
     if (err) return next(err);
 
     if (!user) {
