@@ -61,6 +61,8 @@ app.post('/api/users', function(req, res, next) {
   User.findOne({ email: email }, function(err, user) {
     if (err) return next(err);
 
+    res.send(email);
+
     if (!user) {
       var user = new User({
         userId: userId,
