@@ -56,7 +56,9 @@ app.post('/api/users', function(req, res, next) {
   var gender = req.body.gender;
   var picture = req.body.picture;
   var userId = req.body.id;
-  var pin = req.body.id;
+  var pin = req.body.pin;
+
+  res.send(req.body);
 
   User.findOne({ email: email }, function(err, user) {
     if (err) return next(err);
