@@ -57,13 +57,12 @@ app.post('/api/users', function(req, res, next) {
   var picture = req.body.picture;
   var userId = req.body.id;
   var pin = req.body.pin;
-  console.log(req.body);
 
 
   User.findOne({ email: email }, function(err, user) {
     if (err) return next(err);
 
-
+    console.log("FOUND USER\n" + user);
     if (!user) {
       var user = new User({
         userId: userId,
@@ -76,13 +75,13 @@ app.post('/api/users', function(req, res, next) {
       });
       user.save(function(err) {
         if (err) return next(err);
-        res.send({ message: name + ' has been added successfully!' });
       });
-      res.send("Added this user: " + user);
+      res.send(user);
     }
 
     else{
-    res.send("Found a user: " + user);
+    console.log("NEW USER\n" + user);
+    res.send(user);
     }
   });
 });
