@@ -103,7 +103,7 @@ app.put('/api/users', function(req, res, next) {
         user.birthday = birthday;
         user.gender = gender;
         user.pin = pin;
-      };
+      
       user.save(function(err) {
         if (err) return next(err);
       });
