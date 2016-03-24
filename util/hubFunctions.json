@@ -1,0 +1,42 @@
+[
+  {
+    "path": "/get_uid",
+    "method": "GET"
+  },
+  {
+    "path": "/get_coordinates",
+    "method": "GET"
+  },
+  {
+    "path": "/get_num_lockers",
+    "method": "GET"
+  },
+  {
+    "path": "/allocate_locker",
+    "method": "POST"
+  },
+  {
+    "path": "/start_rental",
+    "method": "POST"
+  },
+  {
+    "path": "/deallocate_locker",
+    "method": "POST"
+  },
+  {
+    "path": "/customer_status",
+    "method": "GET"
+  },
+  {
+    "path": "/open_locker",
+    "method": "POST"
+  },
+  {
+    "path": "/get_open_lockers",
+    "method": "GET"
+  },
+  {
+    "path": "/get_num_open_lockers",
+    "method": "GET"
+  }
+]
