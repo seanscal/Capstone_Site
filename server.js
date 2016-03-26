@@ -65,72 +65,72 @@ app.use(express.static(path.join(__dirname, 'public')));
  * POST /api/users
  * Adds new user to the database.
  */
-app.post('/api/users', function(req, res, next) {
-  var email = req.body.email;
-  var name = req.body.name;
-  var birthday = req.body.birthday;
-  var gender = req.body.gender;
-  var picture = req.body.picture;
-  var userId = req.body.id;
-  var pin = req.body.pin;
+app.post('/api/users', function (req, res, next) {
+    var email = req.body.email;
+    var name = req.body.name;
+    var birthday = req.body.birthday;
+    var gender = req.body.gender;
+    var picture = req.body.picture;
+    var userId = req.body.id;
+    var pin = req.body.pin;
 
 
-  User.findOne({ email: email }, function(err, user) {
-    if (err) return next(err);
-
-    if (!user) {
-      var user = new User({
-        userId: userId,
-        name: name,
-        email: email,
-        birthday: birthday,
-        gender: gender,
-        picture: picture,
-        pin: pin
-      });
-      user.save(function(err) {
+    User.findOne({email: email}, function (err, user) {
         if (err) return next(err);
-      });
-      res.send(user);
-    }
-    else{
-    res.send(user);
-    }
-  });
+
+        if (!user) {
+            var user = new User({
+                userId: userId,
+                name: name,
+                email: email,
+                birthday: birthday,
+                gender: gender,
+                picture: picture,
+                pin: pin
+            });
+            user.save(function (err) {
+                if (err) return next(err);
+            });
+            res.send(user);
+        }
+        else {
+            res.send(user);
+        }
+    });
 });
 
-app.put('/api/users', function(req, res, next) {
-  var email = req.body.email;
-  var name = req.body.name;
-  var birthday = req.body.birthday;
-  var gender = req.body.gender;
-  var picture = req.body.picture;
-  var userId = req.body.id;
-  var pin = req.body.pin;
+app.put('/api/users', function (req, res, next) {
+    var email = req.body.email;
+    var name = req.body.name;
+    var birthday = req.body.birthday;
+    var gender = req.body.gender;
+    var picture = req.body.picture;
+    var userId = req.body.id;
+    var pin = req.body.pin;
 
 
-  User.findOne({ email: email }, function(err, user) {
-    if (err) return next(err);
-
-    if (user) {
-        user.userId = userId;
-        user.name = name;
-        user.email = email
-        user.birthday = birthday;
-        user.gender = gender;
-        user.pin = pin;
-      
-      user.save(function(err) {
+    User.findOne({email: email}, function (err, user) {
         if (err) return next(err);
-      });
-      console.log(user);
-      res.send(user);
-    }
-    else{
-      console.log("shit");
-    res.send("NOT FOUND");
-    }
-  });
+
+        if (user) {
+            user.userId = userId;
+            user.name = name;
+            user.email = email
+            user.birthday = birthday;
+            user.gender = gender;
+            user.pin = pin;
+
+            user.save(function (err) {
+                if (err) return next(err);
+            });
+            console.log(user);
+            res.send(user);
+        }
+        else {
+            console.log("shit");
+            res.send("NOT FOUND");
+        }
+    });
 });
 
 /**
@@ -156,12 +156,12 @@ app.get('/api/users', function (req, res, next) {
  * GET /api/users/:id
  * Return user of id :id
  */
-app.get('/api/users/:id', function(req, res, next) {
-  var id = req.params.id;
-  var email = req.params.email;
+app.get('/api/users/:id', function (req, res, next) {
+    var id = req.params.id;
+    var email = req.params.email;
 
-  User.findOne({ email: email }, function(err, user) {
-    if (err) return next(err);
+    User.findOne({email: email}, function (err, user) {
+        if (err) return next(err);
 
         if (!user) {
             return res.status(404).send({message: 'User not found.'});
@@ -181,15 +181,15 @@ app.get('/api/hubs', function (req, res, next) {
 
     console.log('Entering loop');
 
-    for(var h in hubs) {
+    for (var h in hubs) {
         var hub = hubs[h];
 
         var baseUrl = urlForHub(hub);
         var url = baseUrl + hubPaths.getNumOpenLockers;
 
-        console.log('requesting: '+url);
+        console.log('requesting: ' + url);
 
-        rest.get(url).on('complete', function(result) {
+        rest.get(url).on('complete', function (result) {
             if (result instanceof Error) {
                 console.log('Error:', result.message);
                 this.retry(5000); // try again after 5 sec
@@ -202,7 +202,7 @@ app.get('/api/hubs', function (req, res, next) {
 
     }
 
-    while(response.length < hubs.length) {
+    while (response.length < hubs.length) {
         // wait for all requests
     }
 
@@ -213,7 +213,7 @@ app.get('/api/hubs', function (req, res, next) {
 });
 
 function urlForHub(hub) {
-    return 'http://'+hub.host+':'+hub.port;
+    return 'http://' + hub.host + ':' + hub.port;
 }
 
 /**
