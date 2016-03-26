@@ -65,37 +65,72 @@ app.use(express.static(path.join(__dirname, 'public')));
  * POST /api/users
  * Adds new user to the database.
  */
-app.post('/api/users', function (req, res, next) {
-    var email = req.body.email;
-    var name = req.body.name;
-    var birthday = req.body.birthday;
-    var gender = req.body.gender;
-    var picture = req.body.picture;
-    var userId = req.body.id;
+app.post('/api/users', function(req, res, next) {
+  var email = req.body.email;
+  var name = req.body.name;
+  var birthday = req.body.birthday;
+  var gender = req.body.gender;
+  var picture = req.body.picture;
+  var userId = req.body.id;
+  var pin = req.body.pin;
 
-    User.findOne({email: email}, function (err, user) {
+
+  User.findOne({ email: email }, function(err, user) {
+    if (err) return next(err);
+
+    if (!user) {
+      var user = new User({
+        userId: userId,
+        name: name,
+        email: email,
+        birthday: birthday,
+        gender: gender,
+        picture: picture,
+        pin: pin
+      });
+      user.save(function(err) {
         if (err) return next(err);
+      });
+      res.send(user);
+    }
+    else{
+    res.send(user);
+    }
+  });
+});
 
-        if (!user) {
-            var user = new User({
-                userId: userId,
-                name: name,
-                email: email,
-                birthday: birthday,
-                gender: gender,
-                picture: picture
-            });
-            user.save(function (err) {
-                if (err) return next(err);
-                res.send({message: name + ' has been added successfully!'});
-            });
-        }
-        else {
-            user
-        }
+app.put('/api/users', function(req, res, next) {
+  var email = req.body.email;
+  var name = req.body.name;
+  var birthday = req.body.birthday;
+  var gender = req.body.gender;
+  var picture = req.body.picture;
+  var userId = req.body.id;
+  var pin = req.body.pin;
 
-        res.send(user);
-    });
+
+  User.findOne({ email: email }, function(err, user) {
+    if (err) return next(err);
+
+    if (user) {
+        user.userId = userId;
+        user.name = name;
+        user.email = email
+        user.birthday = birthday;
+        user.gender = gender;
+        user.pin = pin;
+      
+      user.save(function(err) {
+        if (err) return next(err);
+      });
+      console.log(user);
+      res.send(user);
+    }
+    else{
+      console.log("shit");
+    res.send("NOT FOUND");
+    }
+  });
 });
 
 /**
@@ -119,13 +154,14 @@ app.get('/api/users', function (req, res, next) {
 
 /**
  * GET /api/users/:id
- * Return all users
+ * Return user of id :id
  */
-app.get('/api/users/:id', function (req, res, next) {
-    var id = req.params.id;
+app.get('/api/users/:id', function(req, res, next) {
+  var id = req.params.id;
+  var email = req.params.email;
 
-    User.findOne({_id: id}, function (err, user) {
-        if (err) return next(err);
+  User.findOne({ email: email }, function(err, user) {
+    if (err) return next(err);
 
         if (!user) {
             return res.status(404).send({message: 'User not found.'});
