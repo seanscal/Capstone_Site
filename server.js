@@ -177,39 +177,40 @@ app.get('/api/users/:id', function (req, res, next) {
  */
 app.get('/api/hubs', function (req, res, next) {
 
-    var response = [];
+    //var response = [];
+    //
+    //console.log('Entering loop');
+    //
+    //for (var h in hubs) {
+    //    var hub = hubs[h];
+    //
+    //    var baseUrl = urlForHub(hub);
+    //    var url = baseUrl + hubPaths.getNumOpenLockers;
+    //
+    //    console.log('requesting: ' + url);
+    //
+    //    rest.get(url).on('complete', function (result) {
+    //        if (result instanceof Error) {
+    //            console.log('Error:', result.message);
+    //            this.retry(5000); // try again after 5 sec
+    //        } else {
+    //            console.log('got result');
+    //            hub.openUnits = parseInt(result);
+    //            response.push(hub);
+    //        }
+    //    });
+    //
+    //}
+    //
+    //while (response.length < hubs.length) {
+    //    // wait for all requests
+    //    console.log(response.length);
+    //}
+    //
+    //res.send(response);
 
-    console.log('Entering loop');
-
-    for (var h in hubs) {
-        var hub = hubs[h];
-
-        var baseUrl = urlForHub(hub);
-        var url = baseUrl + hubPaths.getNumOpenLockers;
-
-        console.log('requesting: ' + url);
-
-        rest.get(url).on('complete', function (result) {
-            if (result instanceof Error) {
-                console.log('Error:', result.message);
-                this.retry(5000); // try again after 5 sec
-            } else {
-                console.log('got result');
-                hub.openUnits = parseInt(result);
-                response.push(hub);
-            }
-        });
-
-    }
-
-    while (response.length < hubs.length) {
-        // wait for all requests
-    }
-
-    res.send(response);
-
-    //res.send([{uid: 1, name: "NEU Hub", openUnits: 2, lat: 42.3399, long: -71.0892, hourlyRate: 5.25, baseRate: 2},
-    //    {uid: 2, name: "NYC Hub", openUnits: 4, lat: 40.7127, long: -74.0059, hourlyRate: 1.25, baseRate: 2}]);
+    res.send([{uid: 1, name: "NEU Hub", openUnits: 2, lat: 42.3399, long: -71.0892, hourlyRate: 5.25, baseRate: 2},
+        {uid: 2, name: "NYC Hub", openUnits: 4, lat: 40.7127, long: -74.0059, hourlyRate: 1.25, baseRate: 2}]);
 });
 
 function urlForHub(hub) {
