@@ -108,10 +108,11 @@ app.put('/api/users', function (req, res, next) {
     var email = req.body.email;
     var name = req.body.name;
     var birthday = req.body.birthday;
-    var gender = req.body.gender;
     var picture = req.body.picture;
     var userId = req.body.id;
     var pin = req.body.pin;
+    var picture = req.body.picture;
+    var updateTimeStamp = req.body.updateTimeStamp;
 
 
     User.findOne({email: email}, function (err, user) {
@@ -122,8 +123,9 @@ app.put('/api/users', function (req, res, next) {
             user.name = name;
             user.email = email
             user.birthday = birthday;
-            user.gender = gender;
             user.pin = pin;
+            user.picture = picture;
+            user.updateTimeStamp = updateTimeStamp;
 
             user.save(function (err) {
                 if (err) return next(err);

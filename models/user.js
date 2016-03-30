@@ -5,9 +5,10 @@ var userSchema = new mongoose.Schema({
   name: String,
   email: String,
   birthday: String,
-  gender: String,
   picture: String,
   pin: Number,
+  proximity: Number,
+  durationNotif: Number,
   updateTimeStamp: Date
 });
 
