@@ -86,7 +86,8 @@ app.post('/api/users', function (req, res, next) {
                 birthday: birthday,
                 gender: gender,
                 picture: picture,
-                pin: pin
+                pin: pin,
+                updateTimeStamp: updateTimeStamp
             });
             user.save(function (err) {
                 if (err) return next(err);

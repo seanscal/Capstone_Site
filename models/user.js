@@ -8,6 +8,7 @@ var userSchema = new mongoose.Schema({
   gender: String,
   picture: String,
   pin: Number
+  updateTimeStamp: Date
 });
 
 module.exports = mongoose.model('User', userSchema);
