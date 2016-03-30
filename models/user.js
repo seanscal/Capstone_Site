@@ -9,7 +9,7 @@ var userSchema = new mongoose.Schema({
   pin: Number,
   proximity: Number,
   durationNotif: Number,
-  updateTimeStamp: Date
+  updateTimeStamp: Number
 });
 
 module.exports = mongoose.model('User', userSchema);
