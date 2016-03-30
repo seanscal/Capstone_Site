@@ -110,7 +110,6 @@ app.put('/api/users', function (req, res, next) {
     var picture = req.body.picture;
     var userId = req.body.id;
     var pin = req.body.pin;
-    var picture = req.body.picture;
     var updateTimeStamp = req.body.updateTimeStamp;
 
 
