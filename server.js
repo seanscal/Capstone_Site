@@ -107,7 +107,6 @@ app.post('/api/users', function (req, res, next) {
 app.put('/api/users', function (req, res, next) {
     var email = req.body.email;
     var name = req.body.name;
-    var birthday = req.body.birthday;
     var picture = req.body.picture;
     var userId = req.body.id;
     var pin = req.body.pin;
@@ -122,7 +121,6 @@ app.put('/api/users', function (req, res, next) {
             user.userId = userId;
             user.name = name;
             user.email = email
-            user.birthday = birthday;
             user.pin = pin;
             user.picture = picture;
             user.updateTimeStamp = updateTimeStamp;
