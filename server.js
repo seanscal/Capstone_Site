@@ -100,6 +100,10 @@ app.post('/api/users', function (req, res, next) {
     });
 });
 
+/**
+ * PUT /api/users
+ * Updates user in the database.
+ */
 app.put('/api/users', function (req, res, next) {
     var email = req.body.email;
     var name = req.body.name;

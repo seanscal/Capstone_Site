@@ -7,7 +7,7 @@ var userSchema = new mongoose.Schema({
   birthday: String,
   gender: String,
   picture: String,
-  pin: Number
+  pin: Number,
   updateTimeStamp: Date
 });
 
