@@ -108,7 +108,7 @@ app.put('/api/users', function (req, res, next) {
     var email = req.body.email;
     var name = req.body.name;
     var picture = req.body.picture;
-    var userId = req.body.id;
+    var userId = req.body.userId;
     var pin = req.body.pin;
     var updateTimeStamp = req.body.updateTimeStamp;
 
@@ -162,9 +162,8 @@ app.get('/api/users', function (req, res, next) {
  */
 app.get('/api/users/:id', function (req, res, next) {
     var id = req.params.id;
-    var email = req.params.email;
 
-    User.findOne({email: email}, function (err, user) {
+    User.findOne({userID: id}, function (err, user) {
         if (err) return next(err);
 
         if (!user) {
