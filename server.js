@@ -68,11 +68,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/api/users', function (req, res, next) {
     var email = req.body.email;
     var name = req.body.name;
+    var picture = req.body.picture;
+    var userId = req.body.userId;
+    var pin = req.body.pin;
     var birthday = req.body.birthday;
     var gender = req.body.gender;
-    var picture = req.body.picture;
-    var userId = req.body.id;
-    var pin = req.body.pin;
+    var durationNotif = req.body.durationNotif;
+    var proximity = req.body.proximity;
+    var updateTimeStamp = req.body.updateTimeStamp;
 
 
     User.findOne({email: email}, function (err, user) {
@@ -87,6 +90,8 @@ app.post('/api/users', function (req, res, next) {
                 gender: gender,
                 picture: picture,
                 pin: pin,
+                durationNotif: durationNotif,
+                proximity: proximity,
                 updateTimeStamp: updateTimeStamp
             });
             user.save(function (err) {
@@ -110,6 +115,10 @@ app.put('/api/users', function (req, res, next) {
     var picture = req.body.picture;
     var userId = req.body.userId;
     var pin = req.body.pin;
+    var birthday = req.body.birthday;
+    var gender = req.body.gender;
+    var durationNotif = req.body.durationNotif;
+    var proximity = req.body.proximity;
     var updateTimeStamp = req.body.updateTimeStamp;
 
 
@@ -126,6 +135,12 @@ app.put('/api/users', function (req, res, next) {
             if(email) {
                 user.email = email
             }
+            if(gender) {
+                user.gender = gender;    
+            }
+            if(birthday) {
+                user.birthday = birthday
+            }
             if(pin) {
                 user.pin = pin;
             }
@@ -135,6 +150,12 @@ app.put('/api/users', function (req, res, next) {
             if(updateTimeStamp) {
                 user.updateTimeStamp = updateTimeStamp;    
             }
+            if(proximity) {
+                user.proximity = proximity;
+            }
+            if(durationNotif) {
+                user.durationNotif = durationNotif
+            }  
             
             user.save(function (err) {
                 if (err) return next(err);
