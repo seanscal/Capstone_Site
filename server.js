@@ -120,7 +120,8 @@ app.put('/api/users', function (req, res, next) {
             user.userId = userId;
             user.name = name;
             user.email = email
-            user.pin = pin;
+            if(pin):
+                user.pin = pin;
             user.picture = picture;
             user.updateTimeStamp = updateTimeStamp;
 
