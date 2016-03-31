@@ -117,15 +117,25 @@ app.put('/api/users', function (req, res, next) {
         if (err) return next(err);
 
         if (user) {
-            user.userId = userId;
-            user.name = name;
-            user.email = email
-            if(pin){
+            if(userID) {
+                user.userId = userId;    
+            }
+            if(name) {
+                user.name = name;
+            }
+            if(email) {
+                user.email = email
+            }
+            if(pin) {
                 user.pin = pin;
             }
-            user.picture = picture;
-            user.updateTimeStamp = updateTimeStamp;
-
+            if(picture) {
+                user.picture = picture;
+            }
+            if(updateTimeStamp) {
+                user.updateTimeStamp = updateTimeStamp;    
+            }
+            
             user.save(function (err) {
                 if (err) return next(err);
             });
