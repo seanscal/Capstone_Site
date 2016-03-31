@@ -117,7 +117,7 @@ app.put('/api/users', function (req, res, next) {
         if (err) return next(err);
 
         if (user) {
-            if(userID) {
+            if(userId) {
                 user.userId = userId;    
             }
             if(name) {
