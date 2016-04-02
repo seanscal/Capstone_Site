@@ -38,5 +38,9 @@
   {
     "path": "/get_num_open_lockers",
     "method": "GET"
+  },
+  {
+    "path": "/get_hub_info",
+    "method": "GET"
   }
 ]

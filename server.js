@@ -38,7 +38,8 @@ var hubPaths = {
     customerStatus: hubFunctions[6].path,
     openLocker: hubFunctions[7].path,
     getOpenLockers: hubFunctions[8].path,
-    getNumOpenLockers: hubFunctions[9].path
+    getNumOpenLockers: hubFunctions[9].path,
+    getHubInfo: hubFunctions[10].path
 };
 
 var app = express();
@@ -60,6 +61,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 app.use(express.static(path.join(__dirname, 'public')));
+
+var rentalManager = require('./util/RentalManager')(app, rest, hubs, hubPaths);
 
 /**
  * POST /api/users
@@ -207,68 +210,7 @@ app.get('/api/users/:id', function (req, res, next) {
     });
 });
 
-/**
- * GET /api/hubs
- * Return all locker hubs
- */
-app.get('/api/hubs', function (req, res, next) {
 
-    //var response = [];
-    //
-    //console.log('Entering loop');
-    //
-    //for (var h in hubs) {
-    //    var hub = hubs[h];
-    //
-    //    var baseUrl = urlForHub(hub);
-    //    var url = baseUrl + hubPaths.getNumOpenLockers;
-    //
-    //    console.log('requesting: ' + url);
-    //
-    //    rest.get(url).on('complete', function (result) {
-    //        if (result instanceof Error) {
-    //            console.log('Error:', result.message);
-    //            this.retry(5000); // try again after 5 sec
-    //        } else {
-    //            console.log('got result');
-    //            hub.openUnits = parseInt(result);
-    //            response.push(hub);
-    //        }
-    //    });
-    //
-    //}
-    //
-    //while (response.length < hubs.length) {
-    //    // wait for all requests
-    //    console.log(response.length);
-    //}
-    //
-    //res.send(response);
-
-    res.send([{uid: 1, name: "NEU Hub", openUnits: 2, lat: 42.3399, long: -71.0892, hourlyRate: 5.25, baseRate: 2},
-        {uid: 2, name: "NYC Hub", openUnits: 4, lat: 40.7127, long: -74.0059, hourlyRate: 1.25, baseRate: 2}]);
-});
-
-function urlForHub(hub) {
-    return 'http://' + hub.host + ':' + hub.port;
-}
-
-/**
- * GET /api/hubs/:id
- * Return data for specified hub
- */
-app.get('/api/hubs/:id', function (req, res, next) {
-    // temporarily hardcoding a response
-
-    var totalUnits = 6;
-    var openUnits = Math.floor((Math.random() * totalUnits) + 1);
-    res.send({totalUnits: totalUnits, openUnits: openUnits});
-
-    /** TODO:
-     * Ultimately this method will return metadata for the specified locker hub (human-readable location, total
-     * # of units, # available units, and hourly rate.
-     */
-});
 
 app.get('/api/rentals/:active/:userId', function (req, res, next) {
     var pastRentals = [{
