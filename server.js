@@ -199,7 +199,7 @@ app.get('/api/users', function (req, res, next) {
 app.get('/api/users/:id', function (req, res, next) {
     var id = req.params.id;
 
-    User.findOne({userID: id}, function (err, user) {
+    User.findOne({_id: id}, function (err, user) {
         if (err) return next(err);
 
         if (!user) {
