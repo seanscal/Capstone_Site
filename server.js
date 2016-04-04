@@ -216,7 +216,7 @@ app.get('/api/rentals/:active/:userId', function (req, res, next) {
     var pastRentals = [{
         uid: 1,
         userId: 1,
-        hubId: 1,
+        hubId: 0,
         hubName: "NEU Hub",
         lockerId: 3,
         lat: 42.3399,
@@ -229,7 +229,7 @@ app.get('/api/rentals/:active/:userId', function (req, res, next) {
     }, {
         uid: 2,
         userId: 1,
-        hubId: 1,
+        hubId: 0,
         hubName: "NYC Hub",
         lockerId: 2,
         lat: 42.3399,
@@ -242,7 +242,7 @@ app.get('/api/rentals/:active/:userId', function (req, res, next) {
     }, {
         uid: 3,
         userId: 1,
-        hubId: 1,
+        hubId: 0,
         hubName: "NEU Hub",
         lockerId: 5,
         lat: 42.3399,
@@ -254,20 +254,20 @@ app.get('/api/rentals/:active/:userId', function (req, res, next) {
         hourlyRate: 1.25
     }];
 
-    var activeRentals = [{
-        uid: 4,
-        userId: 1,
-        hubId: 1,
-        hubName: "Prudential Hub",
-        lockerId: 1,
-        lat: 42.3399,
-        long: -71.0892,
-        checkInTime: Math.trunc((((new Date()).getTime() / 1000) - 4215)),
-        checkOutTime: null,
-        isActive: true,
-        baseRate: 2.00,
-        hourlyRate: 5.25
-    }];
+    var activeRentals = []; // [{
+    //    uid: 4,
+    //    userId: 1,
+    //    hubId: 0,
+    //    hubName: "NEU Hub",
+    //    lockerId: 1,
+    //    lat: 42.3399,
+    //    long: -71.0892,
+    //    checkInTime: Math.trunc((((new Date()).getTime() / 1000) - 4215)),
+    //    checkOutTime: null,
+    //    isActive: true,
+    //    baseRate: 2.00,
+    //    hourlyRate: 5.25
+    //}];
 
     var active = req.params.active;
     console.log(active);
@@ -292,34 +292,6 @@ app.get('/api/pi', function (req, res, next) {
         });
     }).end();
 });
-
-app.post('/api/allocate', function (req, res, next) {
-
-    var baseurl = "http://71.234.41.9:5000/allocate_locker"
-    var jsonData = {"locker_id": "5345", "customer_id": "5345"};
-
-    rest.postJson(baseurl, jsonData).on('complete', function (data) {
-        if (data.error) {
-            sys.puts("Error: " + data.error_message);
-        }
-        console.log(data);
-    });
-});
-
-
-app.post('/api/deallocate', function (req, res, next) {
-
-    var baseurl = "http://71.234.41.9:5000/deallocate_locker"
-    var jsonData = {"locker_id": "5345", "customer_id": "5345"};
-
-    rest.postJson(baseurl, jsonData).on('complete', function (data) {
-        if (data.error) {
-            sys.puts("Error: " + data.error_message);
-        }
-        console.log(data);
-    });
-});
-
 
 // This Might be useful
 // /**
