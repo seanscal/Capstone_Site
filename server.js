@@ -72,7 +72,6 @@ app.post('/api/users', function (req, res, next) {
     var email = req.body.email;
     var name = req.body.name;
     var picture = req.body.picture;
-    var userId = req.body.userId;
     var pin = req.body.pin;
     var birthday = req.body.birthday;
     var gender = req.body.gender;
@@ -86,7 +85,6 @@ app.post('/api/users', function (req, res, next) {
 
         if (!user) {
             var user = new User({
-                userId: userId,
                 name: name,
                 email: email,
                 birthday: birthday,
@@ -116,7 +114,6 @@ app.put('/api/users', function (req, res, next) {
     var email = req.body.email;
     var name = req.body.name;
     var picture = req.body.picture;
-    var userId = req.body.userId;
     var pin = req.body.pin;
     var birthday = req.body.birthday;
     var gender = req.body.gender;
@@ -129,9 +126,6 @@ app.put('/api/users', function (req, res, next) {
         if (err) return next(err);
 
         if (user) {
-            if(userId) {
-                user.userId = userId;    
-            }
             if(name) {
                 user.name = name;
             }
@@ -199,7 +193,7 @@ app.get('/api/users', function (req, res, next) {
 app.get('/api/users/:id', function (req, res, next) {
     var id = req.params.id;
 
-    User.findOne({userID: id}, function (err, user) {
+    User.findOne({_id: id}, function (err, user) {
         if (err) return next(err);
 
         if (!user) {
