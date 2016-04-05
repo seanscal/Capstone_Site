@@ -62,7 +62,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-var rentalManager = require('./util/RentalManager')(app, rest, hubs, hubPaths);
+var rentalManager = require('./util/RentalManager')(app, rest, hubs, hubPaths, User);
 
 /**
  * POST /api/users
@@ -202,71 +202,6 @@ app.get('/api/users/:id', function (req, res, next) {
 
         res.send(user);
     });
-});
-
-
-
-app.get('/api/rentals/:active/:userId', function (req, res, next) {
-    var pastRentals = [{
-        uid: 1,
-        userId: 1,
-        hubId: 0,
-        hubName: "NEU Hub",
-        lockerId: 3,
-        lat: 42.3399,
-        long: -71.0892,
-        checkInTime: 1457592837,
-        checkOutTime: 1457603829,
-        isActive: false,
-        baseRate: 2.00,
-        hourlyRate: 1.25
-    }, {
-        uid: 2,
-        userId: 1,
-        hubId: 0,
-        hubName: "NYC Hub",
-        lockerId: 2,
-        lat: 42.3399,
-        long: -71.0892,
-        checkInTime: 1457604893,
-        checkOutTime: 1457609983,
-        isActive: false,
-        baseRate: 2.00,
-        hourlyRate: 1.25
-    }, {
-        uid: 3,
-        userId: 1,
-        hubId: 0,
-        hubName: "NEU Hub",
-        lockerId: 5,
-        lat: 42.3399,
-        long: -71.0892,
-        checkInTime: 1457611032,
-        checkOutTime: 1457614325,
-        isActive: false,
-        baseRate: 2.00,
-        hourlyRate: 1.25
-    }];
-
-    var activeRentals = []; // [{
-    //    uid: 4,
-    //    userId: 1,
-    //    hubId: 0,
-    //    hubName: "NEU Hub",
-    //    lockerId: 1,
-    //    lat: 42.3399,
-    //    long: -71.0892,
-    //    checkInTime: Math.trunc((((new Date()).getTime() / 1000) - 4215)),
-    //    checkOutTime: null,
-    //    isActive: true,
-    //    baseRate: 2.00,
-    //    hourlyRate: 5.25
-    //}];
-
-    var active = req.params.active;
-    console.log(active);
-    res.send(active == true ? activeRentals : pastRentals);
-
 });
 
 app.get('/api/pi', function (req, res, next) {

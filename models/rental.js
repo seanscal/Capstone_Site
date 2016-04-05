@@ -9,6 +9,7 @@ var rentalSchema = new mongoose.Schema({
     lockerId: Number,
     lat: Number,
     long: Number,
+    reservationTime: { type: Number, default: 0},
     checkInTime: { type: Number, default: 0 },
     checkOutTime: { type: Number, default: 0},
     baseRate: Number,

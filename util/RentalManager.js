@@ -4,13 +4,28 @@
 
 var Rental = require('../models/Rental');
 
-module.exports = function(app, rest, hubs, hubPaths) {
+module.exports = function(app, rest, hubs, hubPaths, User) {
 
     /**
      * GET /api/hubs
      * Return all locker hubs
      */
     app.get('/api/hubs', function (req, res, next) {
+
+        // for debug
+
+        //var hubs = [{
+        //    openUnits: 2,
+        //    totalUnits: 3,
+        //    lat: 42,
+        //    long: -74,
+        //    name: "NEU Hub",
+        //    _id: 0,
+        //    baseRate: 2,
+        //    hourlyRate: 1.2
+        //}];
+        //
+        //res.send(hubs);
 
         var response = [];
 
@@ -77,7 +92,7 @@ module.exports = function(app, rest, hubs, hubPaths) {
 
         var response = {};
 
-        console.log('Requesting: '+url);
+        //console.log('Requesting: '+url);
 
         rest.get(url).on('complete', function(data, result) {
             if (isError(result)) {
@@ -110,6 +125,45 @@ module.exports = function(app, rest, hubs, hubPaths) {
         });
     });
 
+    app.get('/api/rentals/:active/:userId', function (req, res, next) {
+
+        var active = req.params.active;
+
+        var query = active == true ? {
+            $or: [
+                {
+                    status: "RESERVED"
+                }, {
+                    status: "ACTIVE"
+                }
+            ]
+        } : {
+            $or: [
+                {
+                    status: "EXPIRED"
+                }, {
+                    status: "CANCELLED"
+                }, {
+                    status: "PAST"
+                }
+            ]
+        };
+
+        Rental.find(query, function(err, docs) {
+            if(err) {
+                res.status(500).send('Error retrieving rentals.')
+            } else {
+                console.log('found '+docs.length+' docs: '+JSON.stringify(docs));
+                res.send(docs);
+            }
+        });
+
+    });
+
+
+
+
+
     app.post('/api/reserve', function (req, res, next) {
         var hub = null;
 
@@ -128,27 +182,201 @@ module.exports = function(app, rest, hubs, hubPaths) {
         var baseUrl = urlForHub(hub);
         var url = baseUrl + hubPaths.allocateLocker;
 
-        var jsonData = {
-            customer_id: req.body.userId,
-            locker_id: 12, //TODO: un-hardcode once the firmware works
-            pin: 1111
-        };
+        User.findById(req.body.userId, function(err, user) {
+           if(err) {
+               res.status(500).send('User not found.');
+           } else {
 
-        rest.postJson(url, jsonData).on('complete', function (reservationData, result) {
-            if (isError(result)) {
-                if(!result) {
-                    res.status(500).send('Connection refused.');
-                }
-                else {
-                    res.status(500).send('An error occurred: '+result.message);
-                }
+               var jsonData = {
+                   customer_id: req.body.userId,
+                   pin: user.pin
+               };
+
+               rest.postJson(url, jsonData).on('complete', function (reservationData, result) {
+                   if (isError(result)) {
+                       if(!result) {
+                           res.status(500).send('Connection refused.');
+                       }
+                       else {
+                           res.status(500).send('An error occurred: '+result.message);
+                       }
+                   } else {
+
+                       url = baseUrl + hubPaths.getHubInfo;
+
+                       console.log('Requesting: '+url);
+
+                       rest.get(url).on('complete', function (hubData, result) {
+                           if (isError(result)) {
+                               if(!result) {
+                                   res.status(500).send('Connection refused.');
+                               }
+                               else {
+                                   res.status(500).send('An error occurred: '+result.message);
+                               }
+                           } else {
+
+                               console.log('here');
+
+                               var rental = {
+                                   userId: req.body.userId,
+                                   rentalId: reservationData.rentalId,
+                                   hubId: parseInt(hub._id),
+                                   hubName: hub.name,
+                                   lockerId: parseInt(reservationData.locker_id),
+                                   lat: parseFloat(hubData.lat),
+                                   long: parseFloat(hubData.long),
+                                   baseRate: hub.baseRate,
+                                   hourlyRate: hub.hourlyRate,
+                                   reservationTime: Math.floor(Date.now() / 1000) //parseInt(reservationData.date_allocated)
+                               };
+
+                               console.log(JSON.stringify(rental));
+
+                               Rental.create(rental, function(err, rental) {
+                                   if(err) {
+                                       console.log(err.message);
+                                       res.status(500).send('An error occurred.');
+                                   } else {
+                                       console.log('sending rental');
+                                       res.send(rental);
+                                   }
+                               });
+                           }
+                       });
+                   }
+               });
+           }
+        });
+    });
+
+    app.post('/api/rent', function(req, res, next) {
+
+        // look for pre-existing rental (evidence of reservation)
+        Rental.findById(req.body.uid, function(err, doc) {
+            if(err) {
+
+                console.log('No rental exists, querying for user id='+req.body.userId);
+
+                // no rental exists, create new one
+                User.findById(req.body.userId, function(err, user) {
+                    if(err) {
+                        res.status(500).send('User not found.');
+                    } else {
+
+                        var hub = null;
+
+                        for(var h in hubs) {
+                            if(hubs[h]._id === parseInt(req.body.hubId)) {
+                                hub = hubs[h];
+                                break;
+                            }
+                        }
+
+                        if(!hub) {
+                            res.status(500).send('No hub exists for id='+req.body.id);
+                            return;
+                        }
+
+                        var baseUrl = urlForHub(hub);
+                        var url = baseUrl + hubPaths.allocateLocker;
+
+                        var jsonData = {
+                            customer_id: req.body.userId,
+                            pin: user.pin,
+                            start_rental: 1
+                        };
+
+                        console.log('calling '+url+' with data: '+JSON.stringify(jsonData));
+
+                        // call allocate_locker with flag set to 1, so that it will also immediately start the rental
+                        rest.postJson(url, jsonData).on('complete', function(reservationData, result) {
+                            if (isError(result)) {
+                                console.log('error');
+                                if(!result) {
+                                    res.status(500).send('Connection refused.');
+                                }
+                                else {
+                                    res.status(500).send('An error occurred: '+result.message);
+                                }
+                            } else {
+
+                                console.log('no error');
+
+                                url = baseUrl + hubPaths.getHubInfo;
+
+                                rest.get(url).on('complete', function (hubData, result) {
+                                    if (isError(result)) {
+                                        if(!result) {
+                                            res.status(500).send('Connection refused.');
+                                        }
+                                        else {
+                                            res.status(500).send('An error occurred: '+result.message);
+                                        }
+                                    } else {
+
+                                        console.log('here');
+
+                                        var rental = {
+                                            userId: req.body.userId,
+                                            rentalId: reservationData.rentalId,
+                                            hubId: parseInt(hub._id),
+                                            hubName: hub.name,
+                                            lockerId: parseInt(reservationData.locker_id),
+                                            lat: parseFloat(hubData.lat),
+                                            long: parseFloat(hubData.long),
+                                            checkInTime: Math.floor(Date.now() / 1000), // parseInt(reservationData.date_in),
+                                            baseRate: hub.baseRate,
+                                            hourlyRate: hub.hourlyRate
+                                        };
+
+                                        console.log(JSON.stringify(rental));
+
+                                        Rental.create(rental, function(err, rental) {
+                                            if(err) {
+                                                console.log(err.message);
+                                                res.status(500).send('An error occurred.');
+                                            } else {
+                                                rental.status = "ACTIVE";
+                                                rental.save();
+
+                                                res.send(rental);
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
             } else {
+                console.log('Rental found: '+JSON.stringify(doc));
 
-                url = baseUrl + hubPaths.getHubInfo;
+                // rental exists - notify hub to start the rental
 
-                console.log('Requesting: '+url);
+                var hub = null;
 
-                rest.get(url).on('complete', function (hubData, result) {
+                for(var h in hubs) {
+                    if(hubs[h]._id === parseInt(req.body.hubId)) {
+                        hub = hubs[h];
+                        break;
+                    }
+                }
+
+                if(!hub) {
+                    res.status(500).send('No hub exists for id='+req.body.id);
+                    return;
+                }
+
+                var baseUrl = urlForHub(hub);
+                var url = baseUrl + hubPaths.startRental;
+
+                var jsonData = {
+                    customer_id: req.body.userId
+                };
+
+                rest.postJson(url, jsonData).on('complete', function(data, result) {
                     if (isError(result)) {
                         if(!result) {
                             res.status(500).send('Connection refused.');
@@ -157,32 +385,11 @@ module.exports = function(app, rest, hubs, hubPaths) {
                             res.status(500).send('An error occurred: '+result.message);
                         }
                     } else {
+                        doc.checkInTime = Math.floor(Date.now() / 1000); //data.time_in;
+                        doc.status = "ACTIVE";
+                        doc.save();
 
-                        console.log('here');
-
-                        var rental = {
-                            userId: req.body.userId,
-                            rentalId: reservationData.rentalId,
-                            hubId: parseInt(hub._id),
-                            hubName: hub.name,
-                            lockerId: parseInt(reservationData.locker_id),
-                            lat: parseFloat(hubData.lat),
-                            long: parseFloat(hubData.long),
-                            baseRate: hub.baseRate,
-                            hourlyRate: hub.hourlyRate
-                        };
-
-                        console.log(JSON.stringify(rental));
-
-                        Rental.create(rental, function(err, rental) {
-                            if(err) {
-                                console.log(err.message);
-                                res.status(500).send('An error occurred.');
-                            } else {
-                                console.log('sending rental');
-                                res.send(rental);
-                            }
-                        });
+                        res.send(doc);
                     }
                 });
             }
