@@ -396,16 +396,72 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
         });
     });
 
-    app.post('/api/deallocate', function (req, res, next) {
+    app.post('/api/checkOut', function (req, res, next) {
 
-        var baseurl = "http://71.234.41.9:5000/deallocate_locker"
-        var jsonData = {"locker_id": "5345", "customer_id": "5345"};
+        console.log('checking out... finding rental id='+req.body.uid);
 
-        rest.postJson(baseurl, jsonData).on('complete', function (data) {
-            if (data.error) {
-                sys.puts("Error: " + data.error_message);
+        Rental.findById(req.body.uid, function(err, doc) {
+            if(err) {
+                res.status(500).send('Error retrieving rental.');
+            } else {
+
+                if(!doc) {
+                    res.status(500).send('Error retrieving rental.');
+                    return;
+                }
+
+                console.log('checking out rental:'+doc);
+
+                var hub = null;
+
+                for(var h in hubs) {
+                    if(hubs[h]._id === doc.hubId) {
+                        hub = hubs[h];
+                        break;
+                    }
+                }
+
+                if(!hub) {
+                    res.status(500).send('No hub exists for id='+doc.hubId);
+                    return;
+                }
+
+                var baseUrl = urlForHub(hub);
+                var url = baseUrl + hubPaths.deallocateLocker;
+
+                var jsonData = {
+                    customer_id: req.body.userId
+                };
+
+                rest.postJson(url, jsonData).on('complete', function(data, result) {
+                    if (isError(result)) {
+                        if(!result) {
+                            res.status(500).send('Connection refused.');
+                        }
+                        else {
+                            res.status(500).send('An error occurred: '+result.message);
+                        }
+                    } else {
+                        if(data.err) {
+                            res.status(500).send('No locker to deallocate.');
+                            return;
+                        }
+
+                        console.log('check out data:'+JSON.stringify(data));
+
+                        if(!data.date_out) {
+                            res.status(500).send('No end time specified.');
+                            return;
+                        }
+
+                        doc.checkOutTime = data.date_out;
+                        doc.status = "PAST";
+                        doc.save();
+
+                        res.send(doc);
+                    }
+                });
             }
-            console.log(data);
         });
     });
 
