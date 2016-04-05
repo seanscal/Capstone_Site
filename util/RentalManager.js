@@ -2,7 +2,7 @@
  * Created by eliotjohnson on 3/30/16.
  */
 
-var Rental = require('../models/Rental');
+var Rental = require('../models/rental');
 
 module.exports = function(app, rest, hubs, hubPaths, User) {
 
