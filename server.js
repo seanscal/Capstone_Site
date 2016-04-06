@@ -24,7 +24,6 @@ var rest = require('restler');
 var config = require('./config');
 var routes = require('./app/routes');
 var User = require('./models/user');
-var Rental = require('./models/rental');
 
 
 var hubs = require('./util/hubs');
