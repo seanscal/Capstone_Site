@@ -94,8 +94,7 @@ app.post('/api/users', function (req, res, next) {
                 pin: pin,
                 durationNotif: durationNotif,
                 proximity: proximity,
-                updateTimeStamp: updateTimeStamp,
-                password: password
+                updateTimeStamp: updateTimeStamp
             });
             user.save(function (err) {
                 if (err) return next(err);
