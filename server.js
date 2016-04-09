@@ -99,12 +99,9 @@ app.post('/api/users', function (req, res, next) {
             user.save(function (err) {
                 if (err) return next(err);
             });
-            console.log("HURE");
-            console.log(user);
             res.send(user);
         }
         else {
-            console.log("THURE");
             res.send(user);
         }
     });
@@ -207,6 +204,16 @@ app.get('/api/users/:id', function (req, res, next) {
     });
 });
 
+app.get('/api/user', function (req, res, next) {
+    var email = req.query.email;
+    var password = req.query.password;
+
+    User.findOne({email: email, password: password}, function (err, user) {
+        if (err) return next(err);
+        res.send(user);
+    });
+});
+
 app.get('/api/pi', function (req, res, next) {
     var options = {
         host: "71.234.41.9",
@@ -224,26 +231,6 @@ app.get('/api/pi', function (req, res, next) {
         });
     }).end();
 });
-
-// This Might be useful
-// /**
-//  * GET /api/characters/search
-//  * Looks up a character by name. (case-insensitive)
-//  */
-// app.get('/api/characters/search', function(req, res, next) {
-//   var characterName = new RegExp(req.query.name, 'i');
-
-//   Character.findOne({ name: characterName }, function(err, character) {
-//     if (err) return next(err);
-
-//     if (!character) {
-//       return res.status(404).send({ message: 'Character not found.' });
-//     }
-
-//     res.send(character);
-//   });
-// });
-
 
 app.use(function (req, res) {
     Router.match({routes: routes.default, location: req.url}, function (err, redirectLocation, renderProps) {
