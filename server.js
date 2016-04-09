@@ -210,6 +210,8 @@ app.get('/api/user', function (req, res, next) {
   console.log("at least getting the user")
     var email = req.query.email;
     var password = req.query.password;
+    console.log(password);
+    console.log(email);
 
     User.findOne({email: email, password: password}, function (err, user) {
         if (err) return next(err);
