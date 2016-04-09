@@ -1,10 +1,10 @@
 [
   {
-    "_id": 0,
+    "_id": 12345,
     "name": "NEU Hub",
     "host": "71.234.41.9",
     "port": 5000,
     "baseRate": 2,
-    "hourlyRate": 1.25
+    "hourlyRate": 100.25
   }
 ]

@@ -160,10 +160,6 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
 
     });
 
-
-
-
-
     app.post('/api/reserve', function (req, res, next) {
         var hub = null;
 
@@ -465,7 +461,71 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
         });
     });
 
+    app.post('/api/pi/reservationExpired', function(req, res, next) {
 
+        var hubId = parseInt(req.body.hubId);
+        var lockerId = parseInt(req.body.lockerId);
+
+        Rental.findOne({ hubId: hubId, lockerId: lockerId }, function(err, doc) {
+            if(err) {
+                res.status(500).send('Failure.');
+            } else {
+                doc.status = "EXPIRED";
+                doc.save();
+
+                res.send('Success.');
+            }
+        });
+
+    });
+
+    app.get('/api/getExpirationNotifs', function(req, res, next) {
+
+        var userId = req.params.userId;
+
+        Rental.find({ userId: userId, status: 'EXPIRED', firedExpirationNotif: false }, function(err, docs) {
+            if(err) {
+                res.status(500).send('Error fetching lockers.');
+            } else {
+                res.send(docs);
+            }
+        });
+
+
+    });
+
+    app.post('/api/firedNotif', function(req, res, next) {
+
+        var uid = req.body.uid;
+        var type = req.body.type;
+
+        Rental.findById(uid, function(err, doc) {
+           if(err) {
+               res.status(500).send('Could not find locker.');
+           } else {
+
+               switch(type) {
+                   case "EXPIRATION":
+                       doc.firedExpirationNotif = true;
+                       break;
+                   case "PROXIMITY":
+                       doc.firedProximityNotif = true;
+                       break;
+                   case "DURATION":
+                       doc.firedDurationNotif = true;
+                       break;
+                   default:
+                       res.status(500).send('Failure');
+                       return;
+               }
+
+               doc.save();
+
+               res.send('Success.');
+           }
+        });
+
+    });
 
     // helper methods
 

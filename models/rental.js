@@ -15,7 +15,8 @@ var rentalSchema = new mongoose.Schema({
     baseRate: Number,
     hourlyRate: Number,
     firedProximityNotif: { type: Boolean, default: false },
-    firedDurationNotif: { type: Boolean, default: false }
+    firedDurationNotif: { type: Boolean, default: false },
+    firedExpirationNotif: { type: Boolean, default: false}
 });
 
 module.exports = mongoose.model('Rental', rentalSchema);
