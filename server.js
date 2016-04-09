@@ -99,9 +99,12 @@ app.post('/api/users', function (req, res, next) {
             user.save(function (err) {
                 if (err) return next(err);
             });
+            console.log("HURE");
+            console.log(user);
             res.send(user);
         }
         else {
+            console.log("THURE");
             res.send(user);
         }
     });
@@ -162,7 +165,6 @@ app.put('/api/users', function (req, res, next) {
             res.send(user);
         }
         else {
-            console.log("shit");
             res.send("NOT FOUND");
         }
     });

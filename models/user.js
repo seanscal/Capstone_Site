@@ -10,7 +10,8 @@ var userSchema = new mongoose.Schema({
   pin: Number,
   proximity: Number,
   durationNotif: Number,
-  updateTimeStamp: Number
+  updateTimeStamp: Number,
+  password: String
 });
 
 module.exports = mongoose.model('User', userSchema);
