@@ -207,6 +207,7 @@ app.get('/api/users/:id', function (req, res, next) {
 });
 
 app.get('/api/user', function (req, res, next) {
+  console.log("at least getting the user")
     var email = req.query.email;
     var password = req.query.password;
 
