@@ -79,6 +79,7 @@ app.post('/api/users', function (req, res, next) {
     var durationNotif = req.body.durationNotif;
     var proximity = req.body.proximity;
     var updateTimeStamp = req.body.updateTimeStamp;
+    var password = req.body.password;
 
 
     User.findOne({email: email}, function (err, user) {
