@@ -164,7 +164,7 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
         var hub = null;
 
         for(var h in hubs) {
-            if(hubs[h]._id === parseInt(req.body.hubId)) {
+            if(hubs[h]._id == parseInt(req.body.hubId)) {
                 hub = hubs[h];
                 break;
             }
@@ -354,7 +354,7 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
                 var hub = null;
 
                 for(var h in hubs) {
-                    if(hubs[h]._id === parseInt(req.body.hubId)) {
+                    if(hubs[h]._id == parseInt(req.body.hubId)) {
                         hub = hubs[h];
                         break;
                     }
@@ -411,7 +411,7 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
                 var hub = null;
 
                 for(var h in hubs) {
-                    if(hubs[h]._id === doc.hubId) {
+                    if(hubs[h]._id == doc.hubId) {
                         hub = hubs[h];
                         break;
                     }
@@ -431,6 +431,7 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
 
                 rest.postJson(url, jsonData).on('complete', function(data, result) {
                     if (isError(result)) {
+                        console.log('is error result');
                         if(!result) {
                             res.status(500).send('Connection refused.');
                         }
@@ -438,6 +439,9 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
                             res.status(500).send('An error occurred: '+result.message);
                         }
                     } else {
+
+                        console.log('check out data: '+JSON.stringify(data));
+
                         if(data.err) {
                             res.status(500).send('No locker to deallocate.');
                             return;
@@ -510,6 +514,7 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
                        break;
                    case "PROXIMITY":
                        doc.firedProximityNotif = true;
+                       console.log('setting proximity notif to true');
                        break;
                    case "DURATION":
                        doc.firedDurationNotif = true;
@@ -525,6 +530,121 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
            }
         });
 
+    });
+
+    app.post('/api/unlock', function(req, res) {
+
+        console.log('here 1');
+
+        Rental.findById(req.body.uid, function(err, rental) {
+            if(err) {
+                res.status(500).send('Error.');
+            } else {
+
+                console.log('here 2');
+
+                if(!rental) {
+                    res.status(500).send('Error.');
+                    return;
+                }
+
+                User.findById(rental.userId, function(err, user) {
+                   if(err) {
+                       res.status(500).send('Error.');
+                   } else {
+
+                       console.log('here 3');
+
+                       if(!user) {
+                           res.status(500).send('Error.');
+                       }
+
+                       var hub = null;
+
+                       for(var h in hubs) {
+                           if(hubs[h]._id === parseInt(rental.hubId)) {
+                               hub = hubs[h];
+                               break;
+                           }
+                       }
+
+                       if(!hub) {
+                           res.status(500).send('No hub exists for id='+rental.hubId);
+                           return;
+                       }
+
+                       var baseUrl = urlForHub(hub);
+                       var url = baseUrl + hubPaths.openLocker;
+
+                       var jsonData = {
+                           customer_id: rental.userId,
+                           locker_id: rental.lockerId,
+                           pin: user.pin
+                       };
+
+                       rest.postJson(url, jsonData).on('complete', function(data, result) {
+                           if(isError(result)) {
+                               res.status(500).send('Error.');
+                           } else {
+                               if(data.err) {
+                                   res.status(500).send('Error.');
+                                   return;
+                               }
+
+                               console.log('Unlock data: '+JSON.stringify(data));
+
+                               var jsonResponse = {
+                                   timestamp: data.TimeOpened
+                               };
+
+                               res.json(jsonResponse);
+                           }
+                       });
+                   }
+                });
+            }
+        });
+
+    });
+
+    app.get('/api/doorStatus', function(req, res) {
+
+        var hubId = parseInt(req.query.hubId);
+        var lockerId = parseInt(req.query.lockerId);
+
+        var hub = null;
+
+        console.log('hubId='+hubId);
+
+        for(var h in hubs) {
+            if(hubs[h]._id == hubId) {
+                hub = hubs[h];
+                break;
+            }
+        }
+
+        if(!hub) {
+            res.status(500).send('No hub exists for id='+req.body.id);
+            console.log('uh oh');
+            return;
+        }
+
+        var baseUrl = urlForHub(hub);
+        var url = baseUrl + hubPaths.doorStatus;
+
+        console.log('checkin the door yo: '+url);
+
+        rest.get(url, { lockerId: lockerId }).on('complete', function(data, result) {
+            if(isError(result)) {
+                res.status(500).send('Error.');
+            } else {
+                if(!data) { // door closed
+                    res.send('CLOSED');
+                } else {
+                    res.send('OPEN');
+                }
+            }
+        });
     });
 
     // helper methods
