@@ -80,6 +80,7 @@ app.post('/api/users', function (req, res, next) {
     var durationNotif = req.body.durationNotif;
     var proximity = req.body.proximity;
     var updateTimeStamp = req.body.updateTimeStamp;
+    var password = req.body.password;
 
 
     User.findOne({email: email}, function (err, user) {
@@ -95,17 +96,15 @@ app.post('/api/users', function (req, res, next) {
                 pin: pin,
                 durationNotif: durationNotif,
                 proximity: proximity,
-                updateTimeStamp: updateTimeStamp
+                updateTimeStamp: updateTimeStamp,
+                password: password
             });
             user.save(function (err) {
                 if (err) return next(err);
             });
-            console.log("HURE");
-            console.log(user);
             res.send(user);
         }
         else {
-            console.log("THURE");
             res.send(user);
         }
     });
@@ -204,6 +203,16 @@ app.get('/api/users/:id', function (req, res, next) {
             return res.status(404).send({message: 'User not found.'});
         }
 
+        res.send(user);
+    });
+});
+
+app.get('/api/user', function (req, res, next) {
+    var email = req.query.email;
+    var password = req.query.password;
+
+    User.findOne({email: email, password: password}, function (err, user) {
+        if (err) return next(err);
         res.send(user);
     });
 });
