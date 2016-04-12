@@ -42,5 +42,8 @@
   {
     "path": "/get_hub_info",
     "method": "GET"
+  }, {
+    "path": "/locker_door_open",
+    "method": "GET"
   }
 ]

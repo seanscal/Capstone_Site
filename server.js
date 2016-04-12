@@ -40,7 +40,8 @@ var hubPaths = {
     openLocker: hubFunctions[7].path,
     getOpenLockers: hubFunctions[8].path,
     getNumOpenLockers: hubFunctions[9].path,
-    getHubInfo: hubFunctions[10].path
+    getHubInfo: hubFunctions[10].path,
+    doorStatus: hubFunctions[11].path
 };
 
 var app = express();
@@ -224,26 +225,6 @@ app.get('/api/pi', function (req, res, next) {
         });
     }).end();
 });
-
-// This Might be useful
-// /**
-//  * GET /api/characters/search
-//  * Looks up a character by name. (case-insensitive)
-//  */
-// app.get('/api/characters/search', function(req, res, next) {
-//   var characterName = new RegExp(req.query.name, 'i');
-
-//   Character.findOne({ name: characterName }, function(err, character) {
-//     if (err) return next(err);
-
-//     if (!character) {
-//       return res.status(404).send({ message: 'Character not found.' });
-//     }
-
-//     res.send(character);
-//   });
-// });
-
 
 app.use(function (req, res) {
     Router.match({routes: routes.default, location: req.url}, function (err, redirectLocation, renderProps) {
