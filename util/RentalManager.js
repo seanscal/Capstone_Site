@@ -639,7 +639,7 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
 
         console.log('checkin the door yo: '+url);
 
-        url += '?lockerId='+lockerId;
+        url += '?locker_id='+lockerId;
 
         rest.get(url).on('complete', function(data, result) {
             if(isError(result)) {
