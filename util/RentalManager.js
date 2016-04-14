@@ -139,15 +139,7 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
             ],
             userId: req.params.userId
         } : {
-            $or: [
-                {
-                    status: "EXPIRED"
-                }, {
-                    status: "CANCELLED"
-                }, {
-                    status: "PAST"
-                }
-            ],
+            status: "PAST",
             userId: req.params.userId
         };
 
