@@ -645,7 +645,8 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
             if(isError(result)) {
                 res.status(500).send('Error.');
             } else {
-                if(!data) { // door opened
+                console.log('DOOR STATUS DATA: '+JSON.stringify(data));
+                if(data == "False") { // door opened
                     res.send('OPEN');
                 } else {
                     res.send('CLOSED');
