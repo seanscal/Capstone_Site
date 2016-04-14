@@ -647,9 +647,9 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
             } else {
                 console.log('DOOR STATUS DATA: '+JSON.stringify(data));
                 if(data == "False") { // door opened
-                    res.send('OPEN');
+                    res.send({status: 'OPEN'});
                 } else {
-                    res.send('CLOSED');
+                    res.send({status: 'CLOSED'});
                 }
             }
         });
