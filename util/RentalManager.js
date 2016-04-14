@@ -645,10 +645,10 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
             if(isError(result)) {
                 res.status(500).send('Error.');
             } else {
-                if(!data) { // door closed
-                    res.send('CLOSED');
-                } else {
+                if(!data) { // door opened
                     res.send('OPEN');
+                } else {
+                    res.send('CLOSED');
                 }
             }
         });
