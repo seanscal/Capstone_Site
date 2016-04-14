@@ -155,8 +155,26 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
             if(err) {
                 res.status(500).send('Error retrieving rentals.')
             } else {
+
+                var docsToReturn = [];
+
                 console.log('found '+docs.length+' docs: '+JSON.stringify(docs));
-                res.send(docs);
+
+                for(var d in docs) {
+                    var doc = docs[d];
+
+                    if(doc.status == 'RESERVED') {
+                        if(((new Date).getTime()/1000)- doc.checkInTime > 30) {
+                            doc.status = 'EXPIRED';
+                            doc.save();
+                            continue;
+                        }
+                    }
+
+                    docsToReturn.push(doc);
+                }
+
+                res.send(docsToReturn);
             }
         });
 
