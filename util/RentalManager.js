@@ -136,7 +136,8 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
                 }, {
                     status: "ACTIVE"
                 }
-            ]
+            ],
+            userId: req.params.userId
         } : {
             $or: [
                 {
@@ -146,7 +147,8 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
                 }, {
                     status: "PAST"
                 }
-            ]
+            ],
+            userId: req.params.userId
         };
 
         Rental.find(query, function(err, docs) {
