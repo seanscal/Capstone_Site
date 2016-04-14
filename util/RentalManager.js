@@ -455,7 +455,7 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
                         }
 
                         doc.checkOutTime = data.date_out;
-                        doc.status = "PAST";
+                        doc.status = doc.status == "RESERVED" ? "CANCELLED" : "PAST";
                         doc.save();
 
                         res.send(doc);
@@ -562,6 +562,9 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
                        var hub = null;
 
                        for(var h in hubs) {
+
+                           console.log('loop id:'+hubs[h]._id+', hubId:'+rental.hubId);
+
                            if(hubs[h]._id === parseInt(rental.hubId)) {
                                hub = hubs[h];
                                break;
@@ -581,6 +584,8 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
                            locker_id: rental.lockerId,
                            pin: user.pin
                        };
+
+                       console.log(JSON.stringify(jsonData));
 
                        rest.postJson(url, jsonData).on('complete', function(data, result) {
                            if(isError(result)) {
@@ -634,7 +639,9 @@ module.exports = function(app, rest, hubs, hubPaths, User) {
 
         console.log('checkin the door yo: '+url);
 
-        rest.get(url, { lockerId: lockerId }).on('complete', function(data, result) {
+        url += '?lockerId='+lockerId;
+
+        rest.get(url).on('complete', function(data, result) {
             if(isError(result)) {
                 res.status(500).send('Error.');
             } else {

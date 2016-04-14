@@ -47,8 +47,8 @@ var hubPaths = {
 var app = express();
 
 var options = {
-    server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}},
-    replset: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}}
+    server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 10000}},
+    replset: {socketOptions: {keepAlive: 1, connectTimeoutMS: 10000}}
 };
 mongoose.connect(config.database, options);
 mongoose.connection.on('error', function () {
